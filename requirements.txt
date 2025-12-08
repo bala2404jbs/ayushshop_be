@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+asyncpg
+psycopg2-binary
+pydantic-settings
+python-dotenv
+alembic
+greenlet
