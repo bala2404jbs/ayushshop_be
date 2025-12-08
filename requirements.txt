@@ -9,3 +9,4 @@ alembic
 greenlet
 python-jose[cryptography]
 passlib[bcrypt]
+fastapi-mail
