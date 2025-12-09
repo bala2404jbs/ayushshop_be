@@ -18,9 +18,12 @@ async_session_factory = sessionmaker(
 )
 
 async def init_db():
-    async with engine.begin() as conn:
-        # await conn.run_sync(SQLModel.metadata.drop_all)
-        await conn.run_sync(SQLModel.metadata.create_all)
+    # In serverless environments, avoid creating tables on startup to prevent timeouts.
+    # Use Alembic migrations instead.
+    pass
+    # async with engine.begin() as conn:
+    #     # await conn.run_sync(SQLModel.metadata.drop_all)
+    #     await conn.run_sync(SQLModel.metadata.create_all)
 
 async def get_session() -> AsyncSession:
     async with async_session_factory() as session:
