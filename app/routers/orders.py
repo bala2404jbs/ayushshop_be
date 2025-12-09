@@ -63,3 +63,36 @@ async def create_order(
     await session.refresh(order)
     
     return order
+
+from ..dependencies import get_current_user
+from ..models import User
+
+@router.get("/", response_model=List[Order])
+async def get_orders(
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get all orders for the current user.
+    """
+    query = select(Order).where(Order.user_id == current_user.id).options(selectinload(Order.items)).order_by(Order.created_at.desc())
+    result = await session.exec(query)
+    return result.all()
+
+@router.get("/{order_id}", response_model=Order)
+async def get_order(
+    order_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get a specific order by ID.
+    """
+    query = select(Order).where(Order.id == order_id, Order.user_id == current_user.id).options(selectinload(Order.items))
+    result = await session.exec(query)
+    order = result.first()
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+        
+    return order
